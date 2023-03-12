@@ -57,7 +57,7 @@ const createNewUser=asyncHandeler(async(req,res)=>{
 
 const updateUser=asyncHandeler(async(req,res)=>{
 
-    const {id,username,active,roles,password}=req.body();
+    const {id,username,active,roles,password}=req.body;
 
     if(!id||!username||!Array.isArray(roles)||!roles.length){
       return  res.status(401).json({message:"All feild is required"});
@@ -81,7 +81,7 @@ const updateUser=asyncHandeler(async(req,res)=>{
         user.password=await bcrypt(password,10)
     }
     const updatedUser= await user.save()
-    res.json({message:`${updateUser.username} updated`});
+    res.json({message:`${updatedUser.username} updated`});
 })
 
 //@desc Delete user
@@ -96,9 +96,9 @@ const deleteUser=asyncHandeler(async(req,res)=>{
         return res.status(400).json({message:"Id is required"});
 
     }
-    const notes=await Note.findOne({user:id}).lean().exec();
+    const note=await Note.findOne({user:id}).lean().exec();
 
-    if(notes){
+    if(note){
       return  res.status(400).json({message:"User has assigned notes"});
     }
 
@@ -111,6 +111,7 @@ const deleteUser=asyncHandeler(async(req,res)=>{
     const result= await user.deleteOne();
 
     const reply=`Username ${result.username} with id ${result._id} is deleted`
+    res.status(200).json({message:reply});
 
 })
 
