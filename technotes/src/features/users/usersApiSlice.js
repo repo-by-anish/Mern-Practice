@@ -42,4 +42,18 @@ export const userApiSlice = apiSlice.injectEndpoints({
 export const {
     useGetUsersQuery,
 } =userApiSlice;
- 
+
+
+export const selectUserResult=userApiSlice.endpoints.getUsers.select();
+
+
+const selectUserData=createSelector(
+    selectUserResult,
+    userResult=>userResult.data
+)
+
+export const {
+    selectAll: selectAllUsers,
+    selectById: selectUserById,
+    selectIds: selectUserIds
+} = usersAdapter.getSelectors(state=>selectUserData(state)?? initialState);
