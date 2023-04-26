@@ -44,7 +44,7 @@ const NewUserForm = () => {
 
   const onRolesChange = e => {
     const value = Array.from(
-      e.target.selectedOption,
+      e.target.selectedOptions,
       (option) => option.value
     )
     setRoles(value);
@@ -66,8 +66,8 @@ const NewUserForm = () => {
   })
 
   const errClass = isError ? "errmsg" : "offscreen"
-  const validUserClass = !validUsername ? "form__input--incomplete" : ""
-  const validPwdClass = !validPassword ? "form__input--incomplete" : ""
+  const validUserClass = !validUsername&&username ? "form__input--incomplete" : ""
+  const validPwdClass = !validPassword&&password ? "form__input--incomplete" : ""
   const validRolesClass = !Boolean(roles.length) ? "form__input--incomplete" : ""
 
   const content = (
