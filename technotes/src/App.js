@@ -1,7 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import Layout from "./components/Layout";
 import Public from "./components/Public";
-import Login from "./components/Login";
 import DashLayout from "./components/DashLayout";
 import Welcome from "./features/auth/Welcome";
 import NoteList from "./features/notes/NoteList";
@@ -11,6 +10,7 @@ import NewUserForm from "./features/users/NewUserForm";
 import EditNote from "./features/notes/EditNote";
 import NewNote from "./features/notes/NewNote";
 import Prefetch from "./features/auth/Prefetch";
+import Login from "./features/auth/Login";
 
 
 function App() {
