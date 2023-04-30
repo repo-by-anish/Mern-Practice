@@ -6,7 +6,7 @@ import {
 import { apiSlice } from "../../app/api/apiSlice"
 
 const notesAdapter = createEntityAdapter({
-    sortComparer: (a, b) => (a.completed === b.completed)? 0: a.completed?1:-1
+    sortComparer: (a, b) => (a.completed === b.completed) ? 0 : a.completed ? 1 : -1
 });
 
 const initialState = notesAdapter.getInitialState();
@@ -15,10 +15,12 @@ const initialState = notesAdapter.getInitialState();
 export const noteApiSlice = apiSlice.injectEndpoints({
     endpoints: builder => ({
         getNotes: builder.query({
-            query: () => '/notes',
-            validateStatus: (response, result) => {
-                return response.status === 200 && !result.isError
-            },
+            query: () => ({
+                url: '/notes',
+                validateStatus: (response, result) => {
+                    return response.status === 200 && !result.isError
+                },
+            }),
             transformResponse: responseData => {
                 const loadedNotes = responseData.map(note => {
                     note.id = note._id
@@ -38,37 +40,37 @@ export const noteApiSlice = apiSlice.injectEndpoints({
             }
         }),
         addNewNote: builder.mutation({
-            query: initialPost=>({
-                url:'/notes',
-                method:'POST',
-                body:{
+            query: initialPost => ({
+                url: '/notes',
+                method: 'POST',
+                body: {
                     ...initialPost
                 }
             }),
             invalidatesTags: [
-                {type: "Note", id: "LIST"}
+                { type: "Note", id: "LIST" }
             ]
         }),
         updateNote: builder.mutation({
-            query: initialPost=>({
-                url:'/notes',
-                method:'PATCH',
-                body:{
+            query: initialPost => ({
+                url: '/notes',
+                method: 'PATCH',
+                body: {
                     ...initialPost
                 }
             }),
-            invalidatesTags: (result,error,args)=>[
-                {type: "Note", id: args.id}
+            invalidatesTags: (result, error, args) => [
+                { type: "Note", id: args.id }
             ]
         }),
         deleteNote: builder.mutation({
-            query: ({id})=>({
-                url:"/notes",
-                method:"DELETE",
-                body: {id}
+            query: ({ id }) => ({
+                url: "/notes",
+                method: "DELETE",
+                body: { id }
             }),
-            invalidatesTags: (result,error,args)=>[
-                {type: "Note", id: args.id}
+            invalidatesTags: (result, error, args) => [
+                { type: "Note", id: args.id }
             ]
         })
     })
@@ -79,19 +81,19 @@ export const {
     useAddNewNoteMutation,
     useUpdateNoteMutation,
     useDeleteNoteMutation,
-} =noteApiSlice;
+} = noteApiSlice;
 
 
-export const selectNoteResult=noteApiSlice.endpoints.getNotes.select();
+export const selectNoteResult = noteApiSlice.endpoints.getNotes.select();
 
 
-const selectNoteData=createSelector(
+const selectNoteData = createSelector(
     selectNoteResult,
-    noteResult=>noteResult.data
+    noteResult => noteResult.data
 )
 
 export const {
     selectAll: selectAllNotes,
     selectById: selectNoteById,
     selectIds: selectNoteIds
-} = notesAdapter.getSelectors(state=>selectNoteData(state)?? initialState);
+} = notesAdapter.getSelectors(state => selectNoteData(state) ?? initialState);

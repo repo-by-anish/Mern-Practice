@@ -1,12 +1,15 @@
-import { useSelector } from "react-redux"
-import { selectNoteById } from "./notesApiSlice"
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
-
+import { useGetNotesQuery } from "./notesApiSlice";
+import { memo } from "react";
 
 const Note = ({noteId}) => {
-    const note=useSelector(state=>selectNoteById(state,noteId));
+    const {note}= useGetNotesQuery("notesList", {
+        selectFromResult: ({data})=>({
+            note: data?.entities[noteId]
+        }),
+    })
     
     const navigate=useNavigate();
 
@@ -16,7 +19,6 @@ const Note = ({noteId}) => {
 
         const handleEdit=()=>navigate(`/dash/notes/${noteId}`)
 
-        console.log(note);
         return (
             <tr className="table__row">
                 <td className="table__cell note__status">
@@ -44,4 +46,6 @@ const Note = ({noteId}) => {
     }else return null
 }
 
-export default Note
+const MemoizedNote=memo(Note)
+
+export default MemoizedNote

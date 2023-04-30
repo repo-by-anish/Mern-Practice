@@ -1,32 +1,45 @@
+import useAuth from "../../hooks/useAuth";
+import useTitle from "../../hooks/useTitle";
 import Note from "./Note";
 import { useGetNotesQuery } from "./notesApiSlice"
+import PulseLoader from "react-spinners/PulseLoader";
 
 const NoteList = () => {
+  useTitle("notes")
+  const {username,isManager,isAdmin}=useAuth()
+
   const {
-    data :notes,
+    data: notes,
     isLoading,
     isSuccess,
     isError,
     error
-  } =useGetNotesQuery(undefined,{
-    pollingInterval:15000,
+  } = useGetNotesQuery("notesList", {
+    pollingInterval: 15000,
     refetchOnFocus: true,
     refetchOnMountOrArgChange: true
   });
 
   let content;
-  if(isLoading){
-    content=<p>Loading ...</p>
+  if (isLoading) {
+    content = <PulseLoader color={"#FFF"}/>
   }
-  if(isError){
-    content=<p className="errmsg">{ error?.data?.message }</p>
+  if (isError) {
+    content = <p className="errmsg">{error?.data?.message}</p>
   }
 
-  if(isSuccess){
-    const { ids } = notes;
-    const tableContent = ids?.length ?
-      ids.map(noteId => <Note key={noteId} noteId={noteId} />)
-      : null
+  if (isSuccess) {
+    const { ids, entities } = notes;
+
+    let filteredIds;
+
+    if(isManager||isAdmin){
+      filteredIds=[...ids]
+    }else{
+      filteredIds=ids.filter(noteId=> entities[noteId].username===username)
+    }
+
+    const tableContent = ids?.length &&filteredIds.map(noteId => <Note key={noteId} noteId={noteId} />)
 
     content = (
       <table className="table table--notes">

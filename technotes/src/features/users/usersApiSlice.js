@@ -13,10 +13,12 @@ const initialState = usersAdapter.getInitialState();
 export const userApiSlice = apiSlice.injectEndpoints({
     endpoints: builder => ({
         getUsers: builder.query({
-            query: () => '/users',
-            validateStatus: (response, result) => {
-                return response.status === 200 && !result.isError
-            },
+            query: () => ({
+                url: '/users',
+                validateStatus: (response, result) => {
+                    return response.status === 200 && !result.isError
+                },
+            }),
             transformResponse: responseData => {
                 const loadedUsers = responseData.map(user => {
                     user.id = user._id
@@ -37,37 +39,37 @@ export const userApiSlice = apiSlice.injectEndpoints({
         }),
 
         addNewUser: builder.mutation({
-            query: initialUserData=>({
-                url:"/users",
-                method:'POST',
+            query: initialUserData => ({
+                url: "/users",
+                method: 'POST',
                 body: {
                     ...initialUserData,
                 }
             }),
             invalidatesTags: [
-                {type:'User', id: 'LIST'}
+                { type: 'User', id: 'LIST' }
             ]
         }),
         updateUser: builder.mutation({
-            query: initialUserData=>({
-                url:'/users',
+            query: initialUserData => ({
+                url: '/users',
                 method: 'PATCH',
-                body:{
+                body: {
                     ...initialUserData,
                 }
             }),
-            invalidatesTags:(result,err,args)=> [
-                {type:'User', id:args.id }
+            invalidatesTags: (result, err, args) => [
+                { type: 'User', id: args.id }
             ]
         }),
         deleteUser: builder.mutation({
-            query: ({id})=>({
-                url:'/users',
-                method:'DELETE',
-                body:{id}
+            query: ({ id }) => ({
+                url: '/users',
+                method: 'DELETE',
+                body: { id }
             }),
-            invalidatesTags:(result,error,args)=>[
-                {type:'User', id: args.id}
+            invalidatesTags: (result, error, args) => [
+                { type: 'User', id: args.id }
             ]
         })
     })
@@ -78,19 +80,19 @@ export const {
     useAddNewUserMutation,
     useUpdateUserMutation,
     useDeleteUserMutation
-} =userApiSlice;
+} = userApiSlice;
 
 
-export const selectUserResult=userApiSlice.endpoints.getUsers.select();
+export const selectUserResult = userApiSlice.endpoints.getUsers.select();
 
 
-const selectUserData=createSelector(
+const selectUserData = createSelector(
     selectUserResult,
-    userResult=>userResult.data
+    userResult => userResult.data
 )
 
 export const {
     selectAll: selectAllUsers,
     selectById: selectUserById,
     selectIds: selectUserIds
-} = usersAdapter.getSelectors(state=>selectUserData(state)?? initialState);
+} = usersAdapter.getSelectors(state => selectUserData(state) ?? initialState);

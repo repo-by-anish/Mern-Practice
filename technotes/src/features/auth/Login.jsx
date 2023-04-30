@@ -4,13 +4,18 @@ import { useNavigate } from 'react-router-dom'
 import { useLoginMutation } from './authApiSlice'
 import { Link } from 'react-router-dom'
 import { setCredentials } from './authSlice'
+import usePersist from '../../hooks/usePersist'
+import PulseLoader from "react-spinners/PulseLoader";
+import useTitle from '../../hooks/useTitle'
 
 const Login = () => {
+  useTitle("employee login")
   const userRef = useRef()
   const errRef = useRef()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [errMsg, setErrMsg] = useState('')
+  const [persist, setPersist] = usePersist()
 
   const navigate = useNavigate()
   const dispatch = useDispatch()
@@ -42,7 +47,7 @@ const Login = () => {
       } else if (error.status === 401) {
         setErrMsg("Unauthorized");
       } else {
-        setErrMsg(error.data?.message);
+        setErrMsg(error?.data?.message);
       }
       errRef.current.focus();
     }
@@ -50,11 +55,12 @@ const Login = () => {
 
   const handleUserInput = e => setUsername(e.target.value)
   const handlePwdInput = e => setPassword(e.target.value)
+  const handleToggle = () => setPersist(prev => !prev)
 
   const errClass = errMsg ? "errmsg" : "offscreen"
 
   if (isLoading) {
-    return <p>Loading...</p>
+    return <PulseLoader color={"FFF"}/>
   }
 
 
@@ -87,6 +93,15 @@ const Login = () => {
             required
           />
           <button className='form__submit-button'>Sign In</button>
+          <label htmlFor="persist" className='form__persist'>Trust this device
+            <input
+              type="checkbox"
+              id="persist"
+              className='form__checkbox'
+              onChange={handleToggle}
+              checked={persist}
+            />
+          </label>
         </form>
       </main>
       <footer>

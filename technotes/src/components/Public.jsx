@@ -1,7 +1,9 @@
 import { Link } from "react-router-dom"
+import useTitle from "../hooks/useTitle"
 
 
 const Public = () => {
+    useTitle("welcome")
     const content = (
         <section className="public">
             <header>
